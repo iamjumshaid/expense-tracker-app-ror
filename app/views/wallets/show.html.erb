@@ -1,0 +1,46 @@
+<%= render partial: 'layouts/shared/navbar'%>
+<% if flash[:info] %>
+<div class="alert-info border p-3">
+    <%= flash[:info] %>
+</div>
+<% end %>
+<% if flash[:alert] %>
+<div class="alert-danger border p-3">
+    <%= flash[:alert] %>
+</div>
+<% end %>
+<hr>
+<!------------->
+<h4 class="text-primary col-7">My Wallet</h4>
+<%= form_with model: @wallet do |form| %>
+<table class="table">
+    <thead class="text-info">
+        <tr>
+            <th scope="col">Wallet ID</th>
+            <th scope="col">Current Balance</th>
+            <th scope="col">Created At</th>
+            <th scope="col">Last Updated</th>
+            <th scope="col">Update</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                <%= @wallet.id %>
+            </td>
+            <td>
+                <%= form.number_field :current_amount, placeholder: "#{@wallet.current_amount} PKR"  %>
+            </td>
+            <td>
+                <%= @wallet.created_at %>
+            </td>
+            <td>
+                <%= @wallet.updated_at %>
+            </td>
+            <td>
+                <%= form.submit nil, class: 'btn btn-success' %>
+            </td>
+        </tr>
+        </body>
+</table>
+<% end %>

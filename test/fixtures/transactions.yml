@@ -1,0 +1,23 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  category: 
+  trans_type: MyString
+  string,: MyString
+  amount: MyString
+  float,: MyString
+  date: MyString
+  datetime_local_field,: MyString
+  description: MyString
+  string: MyString
+
+two:
+  category: 
+  trans_type: MyString
+  string,: MyString
+  amount: MyString
+  float,: MyString
+  date: MyString
+  datetime_local_field,: MyString
+  description: MyString
+  string: MyString

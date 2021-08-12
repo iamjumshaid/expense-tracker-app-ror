@@ -1,0 +1,7 @@
+<%= render partial: 'layouts/shared/navbar'%>
+<hr>
+<h4 class="text-primary">
+    <%= link_to '<i class="bi bi-arrow-left-short text-info"></i>'.html_safe, transactions_path(),
+                  method: :get%>
+    Edit Transaction Details</h4>
+<%= render "form", transaction: @transaction %>

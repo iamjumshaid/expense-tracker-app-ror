@@ -1,0 +1,91 @@
+<%= render partial: 'layouts/shared/navbar'%>
+<% if flash[:info] %>
+<div class="alert-info border p-3">
+    <%= flash[:info] %>
+</div>
+<% end %>
+<% if flash[:alert] %>
+<div class="alert-danger border p-3">
+    <%= flash[:alert][0] %>
+</div>
+<% end %>
+<!------------->
+<hr>
+<div class="row">
+    <h4 class="text-primary col-7">My Accounts</h4>
+    <%= link_to '<i class="bi bi-wallet2"></i> My Wallet'.html_safe, wallet_path(current_user.wallet.id),
+                  method: :get,class: "btn btn-info col-2 text-white"%>
+    <!------------------------>
+    &nbsp;&nbsp;&nbsp;
+    <button type="" class="btn btn-success col-2" data-bs-toggle="modal" data-bs-target="#exampleModal">
+        <i class="bi bi-pencil-square"></i>&nbsp;Add new account
+    </button>
+</div>
+<table class="table">
+    <thead class="text-info">
+        <tr>
+            <th scope="col">Account ID</th>
+            <th scope="col">Account Name</th>
+            <th scope="col">Current Amount</th>
+            <th scope="col">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% if @user_accounts.any? %>
+        <% @user_accounts.each do |user_account| %>
+        <tr>
+            <td>
+                <%= user_account.id %>
+            </td>
+            <td>
+                <%= user_account.name %>
+            </td>
+            <td>
+                <%= "#{user_account.current_amount} PKR" %>
+            </td>
+            <td>
+                <div class="btn-group">
+                    <!----Edit button--->
+                    <%= link_to '<i class="bi bi-pencil-square"></i>'.html_safe, edit_account_path(user_account.id),
+                  method: :get,class: "btn btn-primary btn-block" %>
+                    <!------->
+                    <!--destroy button-->
+                    <%= link_to '<i class="bi bi-archive"></i>'.html_safe, account_path(user_account.id),
+                  method: :delete,
+                  data: { confirm: "Are you sure?" }, class: "btn btn-danger btn-block" %>
+                    <!--delete button-->
+                </div>
+            </td>
+        </tr>
+        <% end %>
+        <% else %>
+        <tr>
+            <td colspan="4" rowspan="4" headers="">No data to display.</td>
+        </tr>
+        <% end %>
+    </tbody>
+</table>
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-controller="accounts">
+    <div class="modal-dialog">
+        <%= simple_form_for @account do |f| %>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add new account details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <%= f.input :name, label: 'Account Name' ,error: 'Account name is mandatory!' %>
+                <%= f.input :current_amount, 'data-target' => "accounts.current_amount",label: 'Opening Balance',error: 'Enter a valid amount to continue!' %>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <%= f.button :submit, label: 'Create account', class: 'btn btn-primary' %>
+            </div>
+        </div>
+    </div>
+    <% end %>
+    <!--
+    <button type="" data-action="click->accounts#changeAmount">Click for magic!</button>
+    --->
+</div>

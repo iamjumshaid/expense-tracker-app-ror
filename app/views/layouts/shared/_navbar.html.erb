@@ -1,0 +1,25 @@
+<nav class="navbar navbar-expand-sm bg-light navbar-light ">
+    <!-- Toggler/collapsibe Button -->
+    <div class="container-fluid">
+        <button class="navbar-toggler ms-auto ms-sm-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle Navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="navbar-collapse collapse justify-content-center" id="navbarCollapse">
+            <ul class="navbar-nav ms-2 align-items-end">
+                <li class="nav-item">
+                    <%= link_to '<strong><i class="bi bi-display"></i> Dashboard</strong>'.html_safe, dashboard_index_path, class: "nav-link text-dark h6" %>
+                </li>
+                &nbsp;
+                <li class="nav-item">
+                    <%= link_to '<strong><i class="bi bi-receipt-cutoff"></i> Transactions</strong>'.html_safe, transactions_path, class: "nav-link text-dark h6" %>
+                </li>
+                &nbsp;
+                </li>
+                <li class="nav-item">
+                    <%= link_to '<strong><i class="bi bi-credit-card-2-back"></i> Accounts</strong>'.html_safe, accounts_path, class: "nav-link text-dark h6" %>
+                </li>
+            </ul>
+        </div>
+        <%= link_to (' <i class="bi bi-box-arrow-left"></i> &nbsp;' +"#{current_user.name}").html_safe , destroy_user_session_path, method: :delete, class: "btn btn-primary btn-sm" %>
+    </div>
+</nav>

@@ -1,0 +1,26 @@
+<div class="modal-body">
+    <%= form_with model: account do |form| %>
+    <div>
+        <%= form.label :Account_Name %><br>
+        <%= form.text_field :name, class: "form-control"  %>
+        <% account.errors.full_messages_for(:name).each do |message| %>
+        <div>
+            <%= message %>
+        </div>
+        <% end %>
+        <br>
+    </div>
+    <div>
+        <%= form.label :Current_Balance %><br>
+        <%= form.number_field :current_amount, class: "form-control" %><br>
+        <% account.errors.full_messages_for(:current_amount).each do |message| %>
+        <div>
+            <%= message %>
+        </div>
+        <% end %>
+    </div>
+    <div>
+        <%= form.submit "Update Account", class: "btn btn-primary" %>
+    </div>
+    <% end %>
+</div>

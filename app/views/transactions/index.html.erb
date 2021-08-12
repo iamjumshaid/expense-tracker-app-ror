@@ -1,0 +1,64 @@
+<%= render partial: 'layouts/shared/navbar'%>
+<% if flash[:info] %>
+<div class="alert-info border p-3">
+    <%= flash[:info] %>
+</div>
+<% end %>
+<% if flash[:alert] %>
+<div class="alert-danger border p-3">
+    <%= flash[:alert] %>
+</div>
+<% end %>
+<!------------->
+<hr>
+<h4 class="text-primary col-7">Transactions History</h4>
+<table class="table">
+    <thead class="text-info">
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Description</th>
+            <th scope="col">Category</th>
+            <th scope="col">Type</th>
+            <th scope="col">Account</th>
+            <th scope="col">Amount</th>
+            <th scope="col">Date</th>
+            <th scope="col">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% @user_transactions.each do |transaction| %>
+        <tr>
+            <td>
+                <%= transaction.id %>
+            </td>
+            <td>
+                <%= transaction.description %>
+            </td>
+            <td>
+                <%= transaction.category %>
+            </td>
+            <td>
+                <%= transaction.trans_type %>
+            </td>
+            <td>
+                <%= transaction.accounting.is_a?(Wallet) ? 'Wallet' : transaction.accounting.name %>
+            </td>
+            <td>
+                <%= transaction.amount %>
+            </td>
+            <td>
+                <%= transaction.date %>
+            </td>
+            <td>
+                <div class="btn-group">
+                    <%= link_to '<i class="bi bi-pencil-square"></i>'.html_safe, edit_transaction_path(transaction.id),
+                                method: :get,class: "btn btn-primary btn-block" %>
+                    <%= link_to '<i class="bi bi-archive"></i>'.html_safe, transaction_path(transaction.id),
+                                 method: :delete,
+                                 data: { confirm: "Are you sure?" }, class: "btn btn-danger btn-block" %>
+                </div>
+            </td>
+        </tr>
+        <% end %>
+    </tbody>
+</table>

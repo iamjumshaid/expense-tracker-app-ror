@@ -1,0 +1,47 @@
+<div class="modal-body">
+    <%= form_with model: transaction do |form| %>
+    <div>
+        <%= form.label :Transaction_Description %><br>
+        <%= form.text_field :description, class: "form-control" %><br>
+        <% transaction.errors.full_messages_for(:description).each do |message| %>
+        <div>
+            <%= message %>
+        </div>
+        <% end %>
+    </div>
+    <div>
+        <%= form.label :Transaction_Category %><br>
+        <%= form.text_field :category, class: "form-control"  %><br>
+        <% transaction.errors.full_messages_for(:category).each do |message| %>
+        <div>
+            <%= message %>
+        </div>
+        <% end %>
+    </div>
+    <div>
+        <%= form.label :Transaction_Type %><br>
+        <%= form.select :trans_type, [["Income", "income"], ["Expense", "expense"]], {}, class: "form-select"%><br>
+    </div>
+    <div>
+        <%= form.label :Amount %><br>
+        <%= form.number_field :amount, class: "form-control" %><br>
+        <% transaction.errors.full_messages_for(:amount).each do |message| %>
+        <div>
+            <%= message %>
+        </div>
+        <% end %>
+    </div>
+    <div>
+        <%= form.label :Date %><br>
+        <%= form.datetime_field :date, class: "form-control" %><br>
+        <% transaction.errors.full_messages_for(:date).each do |message| %>
+        <div>
+            <%= message %>
+        </div>
+        <% end %>
+    </div>
+    <div>
+        <%= form.submit "Update Transaction", class: "btn btn-primary" %>
+    </div>
+    <% end %>
+</div>

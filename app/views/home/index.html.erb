@@ -1,0 +1,18 @@
+<div class="card">
+    <div class="card-header text-center">
+        Expense Tracker Application
+    </div>
+    <div class="card-body text-center">
+        <% if notice%>
+        <p class="notice alert alert-info">
+            <%= notice %>
+        </p>
+        <% end %>
+        <h5 class="card-title">Welcome!</h5>
+        <%= image_tag "money.png", height: 300 %>
+        <p class="card-text">Expense tracker helps you to manage your budget and do extra savings!</p>
+        <a href="/users/sign_in" class="btn btn-primary">Login</a>
+        <a href="/users/sign_up" class="btn btn-primary">Create Account</a>
+    </div>
+</div>
+<!--<%= link_to "Sign Out", destroy_user_session_path, method: :delete %>

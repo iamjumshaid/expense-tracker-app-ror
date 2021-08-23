@@ -12,51 +12,161 @@
 <!------------->
 <hr>
 <h4 class="text-primary col-7">Transactions History</h4>
-<table class="table">
+<!----income table--->
+<h5 class="text-center"><strong>Income Category</strong></h5>
+<table class="table table-bordered">
     <thead class="text-info">
         <tr>
             <th scope="col">ID</th>
+            <th scope="col">Type</th>
             <th scope="col">Description</th>
             <th scope="col">Category</th>
-            <th scope="col">Type</th>
             <th scope="col">Account</th>
             <th scope="col">Amount</th>
             <th scope="col">Date</th>
-            <th scope="col">Actions</th>
+            <th scope="col">Action</th>
         </tr>
     </thead>
     <tbody>
-        <% @user_transactions.each do |transaction| %>
+        <% @income_trans.each do |it| %>
         <tr>
             <td>
-                <%= transaction.id %>
+                <%= it.id %>
             </td>
             <td>
-                <%= transaction.description %>
+                <%= it.trans_type %>
             </td>
             <td>
-                <%= transaction.category %>
+                <%= it.description %>
             </td>
             <td>
-                <%= transaction.trans_type %>
+                <%= it.income_category %>
             </td>
             <td>
-                <%= transaction.accounting.is_a?(Wallet) ? 'Wallet' : transaction.accounting.name %>
+                <% if it.trans_from_type == "Account" %>
+                <%= current_user.accounts.find(it.trans_from_id).name %>
+                <% else %>
+                Wallet
+                <% end %>
             </td>
             <td>
-                <%= transaction.amount %>
+                <%= it.amount %>
             </td>
             <td>
-                <%= transaction.date %>
+                <%= it.date %>
             </td>
             <td>
-                <div class="btn-group">
-                    <%= link_to '<i class="bi bi-pencil-square"></i>'.html_safe, edit_transaction_path(transaction.id),
-                                method: :get,class: "btn btn-primary btn-block" %>
-                    <%= link_to '<i class="bi bi-archive"></i>'.html_safe, transaction_path(transaction.id),
-                                 method: :delete,
-                                 data: { confirm: "Are you sure?" }, class: "btn btn-danger btn-block" %>
-                </div>
+                <%= link_to '<i class="bi bi-archive"></i>'.html_safe, transaction_path(it.id),
+                  method: :delete,
+                  data: { confirm: "Are you sure?" }, class: "btn btn-danger btn-block" %>
+            </td>
+        </tr>
+        <% end %>
+    </tbody>
+</table>
+<!--- expense table -->
+<br>
+<hr>
+<br>
+<h5 class="text-center"><strong>Expense Category</strong></h5>
+<table class="table table-bordered">
+    <thead class="text-info">
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Type</th>
+            <th scope="col">Description</th>
+            <th scope="col">Category</th>
+            <th scope="col">Account</th>
+            <th scope="col">Amount</th>
+            <th scope="col">Date</th>
+            <th scope="col">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% @expense_trans.each do |et| %>
+        <tr>
+            <td>
+                <%= et.id %>
+            </td>
+            <td>
+                <%= et.trans_type %>
+            </td>
+            <td>
+                <%= et.description %>
+            </td>
+            <td>
+                <%= et.expense_category %>
+            </td>
+            <td>
+                <% if et.trans_from_type == "Account" %>
+                <%= current_user.accounts.find(et.trans_from_id).name %>
+                <% else %>
+                Wallet
+                <% end %>
+            </td>
+            <td>
+                <%= et.amount %>
+            </td>
+            <td>
+                <%= et.date %>
+            </td>
+            <td>
+                <%= link_to '<i class="bi bi-archive"></i>'.html_safe, transaction_path(et.id),
+                  method: :delete,
+                  data: { confirm: "Are you sure?" }, class: "btn btn-danger btn-block" %>
+            </td>
+        </tr>
+        <% end %>
+    </tbody>
+</table>
+<!--- Bank Transfer -->
+<br>
+<hr>
+<br>
+<h5 class="text-center"><strong>Bank Transfer Category</strong></h5>
+<table class="table table-bordered">
+    <thead class="text-info">
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Type</th>
+            <th scope="col">Description</th>
+            <th scope="col">Account From</th>
+            <th scope="col">Account To</th>
+            <th scope="col">Amount</th>
+            <th scope="col">Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% @bt_trans.each do |bt| %>
+        <tr>
+            <td>
+                <%= bt.id %>
+            </td>
+            <td>
+                <%= bt.trans_type %>
+            </td>
+            <td>
+                <%= bt.description %>
+            </td>
+            <td>
+                <% if bt.trans_from_type == "Account" %>
+                <%= current_user.accounts.find(bt.trans_from_id).name %>
+                <% else %>
+                Wallet
+                <% end %>
+            </td>
+            <td>
+                <% if bt.trans_to_type == "Account" %>
+                <%= current_user.accounts.find(bt.trans_to_id).name %>
+                <% else %>
+                Wallet
+                <% end %>
+            </td>
+            <td>
+                <%= bt.amount %>
+            </td>
+            <td>
+                <%= bt.date %>
             </td>
         </tr>
         <% end %>

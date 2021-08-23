@@ -5,7 +5,8 @@ class CreateTransactions < ActiveRecord::Migration[6.1]
       t.float  :amount, null: false
       t.datetime :date, null: false
       t.string   :description, null: false
-      t.string :category
+      t.string :income_category
+      t.string :expense_category
       t.integer :trans_to_id # for bank transfer only
       t.string :trans_to_type 
 

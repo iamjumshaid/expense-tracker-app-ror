@@ -1,17 +1,159 @@
 <%= render partial: 'layouts/shared/navbar'%>
+<% if flash[:info] %>
+<div class="alert-info border p-3">
+    <%= flash[:info] %>
+</div>
+<% end %>
+<% if flash[:alert] %>
+<div class="alert-danger border p-3">
+    <%= flash[:alert] %>
+</div>
+<% end %>
+<!------------->
 <hr>
-<div class="row">
-    <h4 class="text-primary col-6">
-        <%= current_user.name.split[0]%>'s Dashboard
-    </h4>
-    <div class="btn-group col-6" role="group">
-        <div class="input-group-text" id="btnGroupAddon">Create a New Transaction</div>
-        <%= link_to "Income", new_transaction_path ,class: "btn btn-success"%>
-        <%= link_to "Expense", new_transaction_path ,class: "btn btn-danger"%>
-        <%= link_to "Bank Transfer", new_transaction_path ,class: "btn btn-warning"%>
+<div data-controller="dashboard">
+    <div class="row">
+        <h4 class="text-primary col-10">
+            <%= current_user.name.split[0]%>'s Dashboard
+        </h4>
+        <div class="btn-group col-1" role="group">
+            <button id="btnGroupDrop1" type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                Create Transaction
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                <li>
+                    <button id="bank-transfer" class="dropdown-item" data-action="click->dashboard#income">Income</button>
+                </li>
+                <li>
+                    <button id="bank-transfer" class="dropdown-item" data-action="click->dashboard#expense">Expense</button>
+                </li>
+                <li>
+                    <button id="bank-transfer" class="dropdown-item" data-action="click->dashboard#bankTransfer">Bank Transfer</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!--------------------MAIN FORM --->
+    <!-- main form -->
+    <div class="d-none" name="tform" data-dashboard-target="tform">
+        <h4 name="transferType" data-dashboard-target="transferType">
+            Dummy Text
+        </h4>
+        <%= form_with model: @transaction do |form| %>
+        <div>
+            <%= form.label :Transaction_Description %><br>
+            <%= form.text_field :description, class: "form-control" %><br>
+            <% @transaction.errors.full_messages_for(:description).each do |message| %>
+            <div>
+                <%= message %>
+            </div>
+            <% end %>
+        </div>
+        <div>
+            <%= form.label :Transaction_Type %><br>
+            <%= form.text_field :trans_type, class: "form-control", readonly: "true", data: {"dashboard-target": "trans_type"}%><br>
+            <% @transaction.errors.full_messages_for(:trans_type).each do |message| %>
+            <div>
+                <%= message %>
+            </div>
+            <% end %>
+        </div>
+        <div name="e_category" data-dashboard-target="e_category">
+            <%= form.label :Transaction_Category %><br>
+            <%= form.select :expense_category, options_for_select(Transaction.expense_categories.map {|key, value| [key.titleize, Transaction.expense_categories.key(value)]}, @transaction.expense_category), {}, class:"form-select" %>
+            <br>
+            <% @transaction.errors.full_messages_for(:expense_category).each do |message| %>
+            <div>
+                <%= message %>
+            </div>
+            <% end %>
+        </div>
+        <div name="i_category" data-dashboard-target="i_category">
+            <%= form.label :Transaction_Category %><br>
+            <%= form.select :income_category, options_for_select(Transaction.income_categories.map {|key, value| [key.titleize, Transaction.income_categories.key(value)]}, @transaction.income_category), {}, class:"form-select" %>
+            <br>
+            <% @transaction.errors.full_messages_for(:income_category).each do |message| %>
+            <div>
+                <%= message %>
+            </div>
+            <% end %>
+        </div>
+        <div name="account_from" data-dashboard-target="account_from">
+            <%= form.label :Account_From %><br>
+            <%= form.select :account_from, options_for_select(@user_accounts.collect{|type|[type, type]}), {}, class:"form-select" %>
+            <br>
+            <% @transaction.errors.full_messages_for(:account_from).each do |message| %>
+            <div>
+                <%= message %>
+            </div>
+            <% end %>
+        </div>
+        <div name="account_to" data-dashboard-target="account_to">
+            <%= form.label :Account_To %><br>
+            <%= form.select :account_to, options_for_select(@user_accounts.collect{|type|[type, type]}), {}, class:"form-select" %>
+            <br>
+            <% @transaction.errors.full_messages_for(:account_to).each do |message| %>
+            <div>
+                <%= message %>
+            </div>
+            <% end %>
+        </div>
+        <div>
+            <%= form.label :Amount %><br>
+            <%= form.number_field :amount, class: "form-control", min: "0" %><br>
+            <% @transaction.errors.full_messages_for(:amount).each do |message| %>
+            <div>
+                <%= message %>
+            </div>
+            <% end %>
+        </div>
+        <div>
+            <%= form.label :Date %><br>
+            <%= form.datetime_field :date, class: "form-control" %><br>
+            <% @transaction.errors.full_messages_for(:date).each do |message| %>
+            <div>
+                <%= message %>
+            </div>
+            <% end %>
+        </div>
+        <div>
+            <%= form.submit "Make Transaction", class: "btn btn-primary" %>
+        </div>
+        <% end %>
+    </div>
+    <br><br>
+</div>
+<!--------------->
+<!-------graphs ------->
+<hr class="mb-5">
+<div class="container row">
+    <div class="col-6">
+        <h6 class="text-center"><strong>Total Expenses
+                <%= @total_expense %> Rupees</strong></h6>
+        <%= pie_chart @expense_trans.group(:expense_category).sum(:amount), donut: true %>
+    </div>
+    <div class="col-6">
+        <h6 class="text-center"><strong>Total Income
+                <%= @total_income %> Rupees</strong></h6>
+        <%= pie_chart @income_trans.group(:income_category).sum(:amount), donut: true %>
     </div>
 </div>
-<div class="container my-4">
-    <hr class="mb-5" />
-    <!--dashboard graph and add transaction button-->
+<br><br>
+<div class="container row">
+    <h6><strong>Expenditure Comparison by Transaction Type</strong></h6>
+    <p><strong>Remaining Balance:</strong>
+        <br>
+        <i>
+            Accounts:
+            <%= @accounts_bal %> PKR
+            &nbsp;&nbsp;&nbsp;
+            Wallet:
+            <%= @wallet_bal %> PKR
+            &nbsp;&nbsp;&nbsp;
+            Total:
+            <%= @total_bal %> PKR
+        </i>
+    </p>
+    <%= line_chart @transactions.group(:trans_type).sum(:amount) %>
 </div>
+<hr class="mb-5" />

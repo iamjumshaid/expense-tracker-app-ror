@@ -37,6 +37,7 @@ class AccountsController < ApplicationController
 
 	def destroy
 		@acc = Account.find(params[:id])
+		@trans = @acc.transactions.destroy_all
     @acc.destroy
     flash[:info] = "Account deleted!"
 		redirect_to accounts_path

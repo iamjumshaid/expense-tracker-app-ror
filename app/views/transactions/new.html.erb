@@ -5,57 +5,53 @@
                   method: :get%>
     Create Expense
 </h4>
-<div class="modal-body">
-    <%= form_with model: @transaction do |form| %>
+<%= form_with model: @transaction do |form| %>
+<div>
+    <%= form.label :Transaction_Description %><br>
+    <%= form.text_field :description, class: "form-control" %><br>
+    <% @transaction.errors.full_messages_for(:description).each do |message| %>
     <div>
-        <%= form.label :Transaction_Description %><br>
-        <%= form.text_field :description, class: "form-control" %><br>
-        <% @transaction.errors.full_messages_for(:description).each do |message| %>
-        <div>
-            <%= message %>
-        </div>
-        <% end %>
-    </div>
-    <div>
-        <%= form.label :Transaction_Category %><br>
-        <%= form.select :category, [
-        			["Food", "food"], 
-        			["Transport", "transport"],
-        			["Entertainment", "Entertainment"],
-        			["Rent", "Entertainment"],
-        			["Shopping", "Entertainment"],
-
-        ], {}, class: "form-select"%><br>
-        <% @transaction.errors.full_messages_for(:category).each do |message| %>
-        <div>
-            <%= message %>
-        </div>
-        <% end %>
-    </div>
-    <div>
-        <%= form.label :Amount %><br>
-        <%= form.number_field :amount, class: "form-control" %><br>
-        <% @transaction.errors.full_messages_for(:amount).each do |message| %>
-        <div>
-            <%= message %>
-        </div>
-        <% end %>
-    </div>
-    <div>
-        <%= form.label :Date %><br>
-        <%= form.datetime_field :date, class: "form-control" %><br>
-        <% @transaction.errors.full_messages_for(:date).each do |message| %>
-        <div>
-            <%= message %>
-        </div>
-        <% end %>
-    </div>
-    <div>
-        <%= form.label :Select_Account %><br>
-        <%= form.collection_radio_buttons :, City.order(:name), :id, :name %>
-    </div>
-    <div>
-        <%= form.submit "Add Expense", class: "btn btn-primary" %>
+        <%= message %>
     </div>
     <% end %>
 </div>
+<% if false %>
+<div>
+    <%= form.label :Transaction_Category %><br>
+    <%= form.select :category, [
+                    ["Food", "food"], 
+                    ["Transport", "transport"],
+                    ["Entertainment", "Entertainment"],
+                    ["Rent", "Entertainment"],
+                    ["Shopping", "Entertainment"],
+
+        ], {}, class: "form-select"%><br>
+    <% @transaction.errors.full_messages_for(:category).each do |message| %>
+    <div>
+        <%= message %>
+    </div>
+    <% end %>
+</div>
+<% end%>
+<div>
+    <%= form.label :Amount %><br>
+    <%= form.number_field :amount, class: "form-control" %><br>
+    <% @transaction.errors.full_messages_for(:amount).each do |message| %>
+    <div>
+        <%= message %>
+    </div>
+    <% end %>
+</div>
+<div>
+    <%= form.label :Date %><br>
+    <%= form.datetime_field :date, class: "form-control" %><br>
+    <% @transaction.errors.full_messages_for(:date).each do |message| %>
+    <div>
+        <%= message %>
+    </div>
+    <% end %>
+</div>
+<div>
+    <%= form.submit "Add Expense", class: "btn btn-primary" %>
+</div>
+<% end %>

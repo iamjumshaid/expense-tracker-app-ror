@@ -17,6 +17,7 @@ class TransactionsController < ApplicationController
 
 
   def create
+
     if params[:transaction][:trans_type] == "income"
 
      # making unneccesary parameters for this transaction to be nill
@@ -190,71 +191,112 @@ class TransactionsController < ApplicationController
   end
 
   def make_bank_transfer
-     if params[:transaction][:account_from] != params[:transaction][:account_to]
 
-      if params[:transaction][:account_from] == "Wallet"
-        # tranfer from wallet
-        user_amount =  params[:transaction][:amount].to_f
-        current_wallet_amount = current_user.wallet.current_amount.to_f
-        
-        account_name = params[:transaction][:account_to]
-        acc = current_user.accounts.find_by(name: account_name)
-        current_acc_amount = acc.current_amount
-
-        if current_wallet_amount >= user_amount
-
-          # taking money out from wallet
-          new_wallet_amount = current_wallet_amount - user_amount
-
-          # adding money in the account
-          new_account_amount = current_acc_amount + user_amount
+    if params[:transaction][:account_from] == params[:transaction][:account_to]
+      flash[:alert] = "You can not transfer money within an account!"
+      return redirect_to dashboard_index_path
+    end
 
 
-          # updating wallet and ammount
-          current_user.wallet.update(current_amount: new_wallet_amount) 
-          acc.update(current_amount: new_account_amount)
+    if params[:transaction][:account_from] == Wallet.name
+      # tranfer from wallet
+      user_amount =  params[:transaction][:amount].to_f
+      current_wallet_amount = current_user.wallet.current_amount.to_f
+      
+      account_name = params[:transaction][:account_to]
+      acc = current_user.accounts.find_by(name: account_name)
+      current_acc_amount = acc.current_amount
 
-          # saving the transaction
-          trans = current_user.wallet.transactions.create(
-                      trans_type: params[:transaction][:trans_type], 
-                      amount: params[:transaction][:amount], 
-                      date: params[:transaction][:date], 
-                      description: params[:transaction][:description], 
-                      trans_to_id: acc.id,
-                      trans_to_type: "Account",
-                      user_id: current_user.id)
-          flash[:info] = "Bank transfer sucessful!"
-          redirect_to dashboard_index_path
-        else
-          flash[:alert] = "You do not have sufficient balance in your wallet"
-          redirect_to dashboard_index_path
-        end
+      if current_wallet_amount >= user_amount
+        # taking money out from wallet
+        new_wallet_amount = current_wallet_amount - user_amount
+        # adding money in the account
+        new_account_amount = current_acc_amount + user_amount
+        # updating wallet and ammount
+        current_user.wallet.update(current_amount: new_wallet_amount) 
+        acc.update(current_amount: new_account_amount)
 
-
+        # saving the transaction
+        trans = current_user.wallet.transactions.create(
+                    trans_type: params[:transaction][:trans_type], 
+                    amount: params[:transaction][:amount], 
+                    date: params[:transaction][:date], 
+                    description: params[:transaction][:description], 
+                    trans_to_id: acc.id,
+                    trans_to_type: "Account",
+                    user_id: current_user.id)
+        flash[:info] = "Bank transfer sucessful!"
+        redirect_to dashboard_index_path
       else
-        # transfer from account
+        flash[:alert] = "You do not have sufficient balance in your wallet"
+        redirect_to dashboard_index_path
+      end
 
-        # case 1: transfer from account to wallet
-        if params[:transaction][:account_to] == "Wallet"
+
+    else
+      # transfer from account
+
+      # case 1: transfer from account to wallet
+      if params[:transaction][:account_to] == "Wallet"
+          user_amount =  params[:transaction][:amount].to_f
+          account_name = params[:transaction][:account_from]
+
+          acc_from = current_user.accounts.find_by(name: account_name)
+          current_acc_amount = acc_from.current_amount
+          current_wallet_amount = current_user.wallet.current_amount.to_f
+
+          if current_acc_amount >= user_amount
+
+            # taking money out from the accunt
+            new_account_amount = current_acc_amount - user_amount
+
+            # adding money in wallet
+            new_wallet_amount = current_wallet_amount + user_amount
+
+
+            # updating wallet and account
+            current_user.wallet.update(current_amount: new_wallet_amount) 
+            acc_from.update(current_amount: new_account_amount)
+
+            # saving the transaction
+            trans = acc_from.transactions.create(
+                        trans_type: params[:transaction][:trans_type], 
+                        amount: params[:transaction][:amount], 
+                        date: params[:transaction][:date], 
+                        description: params[:transaction][:description], 
+                        trans_to_id: current_user.wallet.id,
+                        trans_to_type: "Wallet",
+                        user_id: current_user.id)
+            flash[:info] = "Bank transfer sucessful!"
+            redirect_to dashboard_index_path
+          else
+            flash[:alert] = "You do not have sufficient balance in your wallet"
+            redirect_to dashboard_index_path
+          end
+
+      else # case 2: transfer from account to account
             user_amount =  params[:transaction][:amount].to_f
-            account_name = params[:transaction][:account_from]
+            account_from_name = params[:transaction][:account_from]
+            account_to_name = params[:transaction][:account_to]
 
-            acc_from = current_user.accounts.find_by(name: account_name)
-            current_acc_amount = acc_from.current_amount
-            current_wallet_amount = current_user.wallet.current_amount.to_f
+            acc_from = current_user.accounts.find_by(name: account_from_name)
+            acc_to = current_user.accounts.find_by(name: account_to_name)
 
-            if current_acc_amount >= user_amount
+            current_acc_from_amount = acc_from.current_amount
+            current_acc_to_amount = acc_to.current_amount
 
-              # taking money out from the accunt
-              new_account_amount = current_acc_amount - user_amount
+            if current_acc_from_amount >= user_amount
 
-              # adding money in wallet
-              new_wallet_amount = current_wallet_amount + user_amount
+              # taking money out from the account
+              new_account_from_amount = current_acc_from_amount - user_amount
+
+              # adding money in other account
+              new_account_to_amount = current_acc_to_amount + user_amount
 
 
-              # updating wallet and account
-              current_user.wallet.update(current_amount: new_wallet_amount) 
-              acc_from.update(current_amount: new_account_amount)
+              # updating both account
+              acc_to.update(current_amount: new_account_to_amount) 
+              acc_from.update(current_amount: new_account_from_amount)
 
               # saving the transaction
               trans = acc_from.transactions.create(
@@ -263,63 +305,24 @@ class TransactionsController < ApplicationController
                           date: params[:transaction][:date], 
                           description: params[:transaction][:description], 
                           trans_to_id: current_user.wallet.id,
-                          trans_to_type: "Wallet",
-                          user_id: current_user.id)
+                          trans_to_type: "Account",
+                          user_id: acc_to.id)
               flash[:info] = "Bank transfer sucessful!"
               redirect_to dashboard_index_path
             else
               flash[:alert] = "You do not have sufficient balance in your wallet"
               redirect_to dashboard_index_path
             end
-
-        else # case 2: transfer from account to account
-              user_amount =  params[:transaction][:amount].to_f
-              account_from_name = params[:transaction][:account_from]
-              account_to_name = params[:transaction][:account_to]
-
-              acc_from = current_user.accounts.find_by(name: account_from_name)
-              acc_to = current_user.accounts.find_by(name: account_to_name)
-
-              current_acc_from_amount = acc_from.current_amount
-              current_acc_to_amount = acc_to.current_amount
-
-              if current_acc_from_amount >= user_amount
-
-                # taking money out from the account
-                new_account_from_amount = current_acc_from_amount - user_amount
-
-                # adding money in other account
-                new_account_to_amount = current_acc_to_amount + user_amount
-
-
-                # updating both account
-                acc_to.update(current_amount: new_account_to_amount) 
-                acc_from.update(current_amount: new_account_from_amount)
-
-                # saving the transaction
-                trans = acc_from.transactions.create(
-                            trans_type: params[:transaction][:trans_type], 
-                            amount: params[:transaction][:amount], 
-                            date: params[:transaction][:date], 
-                            description: params[:transaction][:description], 
-                            trans_to_id: current_user.wallet.id,
-                            trans_to_type: "Account",
-                            user_id: acc_to.id)
-                flash[:info] = "Bank transfer sucessful!"
-                redirect_to dashboard_index_path
-              else
-                flash[:alert] = "You do not have sufficient balance in your wallet"
-                redirect_to dashboard_index_path
-              end
-        end
       end
-
-     else
-      flash[:alert] = "You can not transfer money within an account!"
-      redirect_to dashboard_index_path
-     end
+    end
   end
 
+
+  private
+   def user_not_authorized
+    flash[:alert] = "You are not allowed to delete the transaction"
+    redirect_to transactions_path
+  end
 
 end
 

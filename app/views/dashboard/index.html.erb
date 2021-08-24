@@ -109,7 +109,7 @@
         </div>
         <div>
             <%= form.label :Date %><br>
-            <%= form.datetime_field :date, class: "form-control" %><br>
+            <%= form.datetime_field :date, class: "form-control", id: "datePicker" %><br>
             <% @transaction.errors.full_messages_for(:date).each do |message| %>
             <div>
                 <%= message %>

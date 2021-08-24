@@ -1,10 +1,14 @@
 Rails.application.routes.draw do
+
+  root to: "home#index"
+
   devise_scope :user do
     post 'users/sign_up', to: 'devise/registrations#create'
     get '/users/sign_out' => 'devise/sessions#destroy'     
   end
 
   devise_for :users
+
 
 
 
@@ -21,5 +25,4 @@ Rails.application.routes.draw do
   # routes for transactions
   resources :transactions
 
-  root to: "home#index"
 end

@@ -1,11 +1,20 @@
 class DashboardController < ApplicationController
 	def index
+
+=begin
     user_wallet = Wallet.find_by(user_id: current_user.id)
     if user_wallet.blank?
     	wallet = current_user.create_wallet
-   	end
-   	@user_accounts = Array.new
-   	@user_accounts << "Wallet"
+   	end 
+=end
+
+   # current_user.wallet.find_or_create_by(name: "Wallet")
+
+    # TODO: find and create in single query
+    user_wallet = Wallet.find_or_create_by(user_id: current_user.id)
+
+
+   	@user_accounts = ["Wallet"]
 
     @transaction = Transaction.new
     @account_names = current_user.accounts.select(:name)
@@ -26,4 +35,5 @@ class DashboardController < ApplicationController
 
     @total_bal = @accounts_bal.to_f + @wallet_bal.to_f
 	end
+
 end

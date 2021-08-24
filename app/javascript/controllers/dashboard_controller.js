@@ -1,7 +1,10 @@
 import { Controller } from "stimulus"
+import _ from 'lodash'
 
 export default class extends Controller {
     static targets = ["tform", "transferType", "trans_type", "e_category", "i_category", "submit", "account_to", "account_from"]
+
+
 
     bankTransfer() {
         console.log("hello from bank transfer")
@@ -16,6 +19,8 @@ export default class extends Controller {
 
         this.e_categoryTarget.classList.add('d-none')
         this.i_categoryTarget.classList.add('d-none')
+
+
     }
     income() {
         console.log("hello from income")

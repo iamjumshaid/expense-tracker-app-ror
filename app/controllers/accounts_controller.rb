@@ -22,11 +22,12 @@ class AccountsController < ApplicationController
 
 	def edit
     @acc = Account.find(params[:id])
+		authorize @acc
   end
 
    def update
     @acc = Account.find(params[:id])
-
+    authorize @acc
     if @acc.update(account_params)
       flash[:info] = "Account details has been updated!"
 			redirect_to accounts_path
@@ -37,6 +38,8 @@ class AccountsController < ApplicationController
 
 	def destroy
 		@acc = Account.find(params[:id])
+
+		authorize @acc
 		@trans = @acc.transactions.destroy_all
     @acc.destroy
     flash[:info] = "Account deleted!"
